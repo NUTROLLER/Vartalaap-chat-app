@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vartalaap - Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700">
+
+  <div class="bg-white w-96 p-8 rounded-2xl shadow-2xl">
+    <h1 class="text-3xl font-semibold text-indigo-600 text-center">Vartalaap</h1>
+    <p class="text-sm text-gray-500 text-center mb-6">Connect. Chat. Feel closer.</p>
+
+    <form id="loginForm" class="space-y-4">
+      
+      <div>
+        <input 
+          type="email" 
+          id="email" 
+          placeholder="Email address" 
+          required
+          pattern="^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+          title="Enter a valid email (example@domain.com)"
+          class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+        />
+      </div>
+
+      <div>
+        <input 
+          type="password" 
+          id="password" 
+          placeholder="Password" 
+          required
+          minlength="8"
+          pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{8,}"
+          title="Password must be 8+ chars, include uppercase, lowercase, number & special character"
+          class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+        />
+      </div>
+
+      <button 
+        type="submit" 
+        class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition"
+      >
+        Login
+      </button>
+
+      <p id="error" class="text-red-500 text-sm text-center hidden">Invalid credentials</p>
+
+    </form>
+
+    <p class="text-sm text-center mt-4 text-gray-600">
+      Don’t have an account?
+      <a href="#" class="text-indigo-600 font-medium hover:underline">Register</a>
+    </p>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorText = document.getElementById('error');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('http://localhost:3000/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          window.location.href = '/chat.html';
+        } else {
+          errorText.classList.remove('hidden');
+        }
+      } catch {
+        errorText.classList.remove('hidden');
+      }
+    });
+  </script>
+
+</body>
+</html>
